@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function ArticleForm() {
     const [articleData, setArticleData] = useState({ title: "", content: "" });
@@ -7,6 +8,9 @@ export default function ArticleForm() {
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [articleImage, setArticleImage] = useState(null);
+
+    const state = useAuth("state");
+    console.log("state", state);
 
     useEffect(
         () => {
@@ -71,7 +75,7 @@ export default function ArticleForm() {
             fetch(`${import.meta.env.VITE_API_BASE_URL}infosphere/articles/`, {
                 method: "POST",
                 headers: {
-                    Authorization: `Token ${import.meta.env.VITE_API_TOKEN}`,
+                    Authorization: `Token ${token}`,
                 },
                 body: newForm,
             })
@@ -91,9 +95,7 @@ export default function ArticleForm() {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
-                                    Authorization: `Token ${
-                                        import.meta.env.VITE_API_TOKEN
-                                    }`,
+                                    Authorization: `Token ${token}`,
                                 },
                                 body: JSON.stringify({
                                     article: data.id,
