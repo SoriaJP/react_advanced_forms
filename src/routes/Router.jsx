@@ -4,6 +4,7 @@ import Home from "../components/Home";
 import Login from "../components/Auth/Login";
 import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
+import Profile from "../components/Profile";
 
 const Router = createBrowserRouter([
     {
@@ -33,6 +34,14 @@ const Router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login />,
+            },
+            {
+                path: "profile",
+                element: (
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                ),
             },
         ],
     },
