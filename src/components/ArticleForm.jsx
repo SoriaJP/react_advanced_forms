@@ -24,7 +24,7 @@ export default function ArticleForm() {
                     return response.json();
                 })
                 .then((data) => {
-                    setCategories(data);
+                    setCategories(data.results);
                 })
                 .catch((error) => {
                     console.error("Error al realizar la petición", error);
