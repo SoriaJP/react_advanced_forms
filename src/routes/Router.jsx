@@ -5,6 +5,7 @@ import Login from "../components/Auth/Login";
 import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
 import Profile from "../components/Profile";
+import SongList from "../components/MusicPlayer/SongList";
 
 const Router = createBrowserRouter([
     {
@@ -34,6 +35,10 @@ const Router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login />,
+            },
+            {
+                path: "songs",
+                element: <SongList />,
             },
             {
                 path: "profile",
