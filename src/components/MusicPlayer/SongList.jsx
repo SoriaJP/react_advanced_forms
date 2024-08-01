@@ -7,16 +7,22 @@ function SongList() {
     const [nextUrl, setNextUrl] = useState(null);
     const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [filters, setFilters] = useState({});
 
     const observerRef = useRef();
     const lastSongElementRef = useRef();
 
     const doFetch = async () => {
         setIsLoading(true);
+        let query = new URLSearchParams({
+            page: page,
+            page_size: 5,
+            ordering: `-created_at`,
+            ...filters,
+        }).toString();
+
         fetch(
-            `${
-                import.meta.env.VITE_API_BASE_URL
-            }harmonyhub/songs/?page=${page}&page_size=5`,
+            `${import.meta.env.VITE_API_BASE_URL}harmonyhub/songs/?${query}`,
             {}
         )
             .then((response) => response.json())
@@ -36,7 +42,7 @@ function SongList() {
 
     useEffect(() => {
         doFetch();
-    }, [page]);
+    }, [page, filters]);
 
     useEffect(() => {
         // Si la petición esta en proceso no creamos observador
@@ -61,6 +67,24 @@ function SongList() {
         }
     }, [isLoading, nextUrl]);
 
+    function handleSearch(event) {
+        event.preventDefault();
+
+        const searchForm = new FormData(event.target);
+
+        const newFilters = {};
+
+        searchForm.forEach((value, key) => {
+            if (value) {
+                newFilters[key] = value;
+            }
+        });
+
+        setFilters(newFilters);
+        setSongs([]);
+        setPage(1);
+    }
+
     if (isError) return <p>Error al cargar las canciones.</p>;
     if (!songs.length && !isLoading) return <p>No hay canciones disponibles</p>;
 
@@ -68,6 +92,49 @@ function SongList() {
         <div>
             <div className="my-5">
                 <h2 className="title">Lista de Canciones</h2>
+                <form className="box" onSubmit={handleSearch}>
+                    <div className="field">
+                        <label className="label">Título:</label>
+                        <div className="control">
+                            <input className="input" type="text" name="title" />
+                        </div>
+                    </div>
+                    <div className="field">
+                        <label className="label">Artista:</label>
+                        <div className="control">
+                            <input
+                                className="input"
+                                type="number"
+                                name="artists"
+                            />
+                        </div>
+                    </div>
+                    <div className="field">
+                        <label className="label">Fecha de inicio:</label>
+                        <div className="control">
+                            <input
+                                className="input"
+                                type="datetime-local"
+                                name="created_at_min"
+                            />
+                        </div>
+                    </div>
+                    <div className="field">
+                        <label className="label">Fecha de fin:</label>
+                        <div className="control">
+                            <input
+                                className="input"
+                                type="datetime-local"
+                                name="created_at_max"
+                            />
+                        </div>
+                    </div>
+                    <div className="field">
+                        <button className="button is-primary" type="submit">
+                            Buscar
+                        </button>
+                    </div>
+                </form>
                 <ul>
                     {songs.map((song, index) => {
                         if (songs.length === index + 1) {
